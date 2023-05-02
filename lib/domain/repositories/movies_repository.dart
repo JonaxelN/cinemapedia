@@ -6,4 +6,6 @@ abstract class MoviesRepository {
   Future<List<Movie>> getPopular({int page = 1});
 
   Future<List<Movie>> getUpComing({int page = 1});
+
+  Future<List<Movie>> getBestRated({int page = 1});
 }
