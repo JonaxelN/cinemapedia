@@ -16,7 +16,7 @@ class MovieMapper {
       popularity: movieDb.popularity,
       posterPath: (movieDb.posterPath != '')
           ? 'https://image.tmdb.org/t/p/w500${movieDb.posterPath}'
-          : 'no-poster',
+          : 'https://aeroclub-issoire.fr/wp-content/uploads/2020/05/image-not-found.jpg',
       releaseDate: movieDb.releaseDate,
       title: movieDb.title,
       video: movieDb.video,
