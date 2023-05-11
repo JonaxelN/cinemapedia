@@ -38,7 +38,7 @@ class CustomAppBar extends ConsumerWidget {
                       final movieRepository = ref.read(movieRepositoryProvider);
                       final searchQuery = ref.read(searchQueryProvider);
 
-                      final movie = showSearch<Movie?>(
+                      showSearch<Movie?>(
                           query: searchQuery,
                           context: context,
                           delegate: SearchMovieDelegate(searchMovies: (query) {
