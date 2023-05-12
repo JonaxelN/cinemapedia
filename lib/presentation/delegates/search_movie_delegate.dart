@@ -12,17 +12,21 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
 
   Timer? _debounceTimer;
   final SearchMoviesCallback searchMovies;
+  final List<Movie> initialMovies;
 
-  SearchMovieDelegate({required this.searchMovies});
+  SearchMovieDelegate({
+    required this.searchMovies,
+    required this.initialMovies,
+  });
 
   void _onQueryChanged(String query) {
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
       //* Busca peliculas y emite stream
-      if (query.isEmpty) {
-        debounceMovies.add([]);
-        return;
-      }
+      // if (query.isEmpty) {
+      //   debounceMovies.add([]);
+      //   return;
+      // }
 
       final movies = await searchMovies(query);
       debounceMovies.add(movies);
@@ -68,7 +72,7 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
 
     return StreamBuilder<List<Movie>>(
       stream: debounceMovies.stream,
-      initialData: const [],
+      initialData: initialMovies,
       builder: (context, snapshot) {
         final movies = snapshot.data ?? [];
         return ListView.builder(

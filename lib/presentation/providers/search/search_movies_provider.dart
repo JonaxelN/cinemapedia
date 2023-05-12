@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final searchQueryProvider = StateProvider((ref) => '');
 
+//*Peliculas previamente buscadas Provider
 final searchedMoviesProvider =
     StateNotifierProvider<SearchMoviesNotifier, List<Movie>>((ref) {
   final movieRepository = ref.read(movieRepositoryProvider);
@@ -16,6 +17,7 @@ typedef SearchMoviesCallback = Future<List<Movie>> Function(String query);
 class SearchMoviesNotifier extends StateNotifier<List<Movie>> {
   SearchMoviesCallback searchMovies;
   final Ref ref;
+
   SearchMoviesNotifier({
     required this.searchMovies,
     required this.ref,
