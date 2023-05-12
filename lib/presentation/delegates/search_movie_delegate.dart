@@ -9,6 +9,7 @@ typedef SearchMoviesCallback = Future<List<Movie>> Function(String query);
 
 class SearchMovieDelegate extends SearchDelegate<Movie?> {
   StreamController<List<Movie>> debounceMovies = StreamController.broadcast();
+  StreamController<bool> isLoadingStream = StreamController.broadcast();
 
   Timer? _debounceTimer;
   final SearchMoviesCallback searchMovies;
@@ -21,6 +22,7 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
 
   void _onQueryChanged(String query) {
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    isLoadingStream.add(true);
     _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
       //* Busca peliculas y emite stream
       // if (query.isEmpty) {
@@ -30,11 +32,13 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
 
       final movies = await searchMovies(query);
       debounceMovies.add(movies);
+      isLoadingStream.add(false);
     });
   }
 
   void clearStreams() {
     debounceMovies.close();
+    isLoadingStream.close();
   }
 
   @override
@@ -44,10 +48,29 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
   List<Widget>? buildActions(BuildContext context) {
     return [
       // if (query.isNotEmpty)
-      FadeIn(
-          animate: query.isNotEmpty,
-          child: IconButton(
-              onPressed: () => query = '', icon: const Icon(Icons.clear)))
+      StreamBuilder<bool>(
+          stream: isLoadingStream.stream,
+          builder: (context, snapshot) {
+            if (snapshot.data ?? false) {
+              return SpinPerfect(
+                  duration: const Duration(seconds: 20),
+                  spins: 10,
+                  infinite: true,
+                  animate: query.isNotEmpty,
+                  child: IconButton(
+                      onPressed: () => query = '',
+                      icon: const Icon(Icons.refresh_rounded)));
+            }
+            return FadeIn(
+                animate: query.isNotEmpty,
+                child: IconButton(
+                    onPressed: () => query = '',
+                    icon: const Icon(Icons.clear)));
+          })
+      // FadeIn(
+      //     animate: query.isNotEmpty,
+      //     child: IconButton(
+      //         onPressed: () => query = '', icon: const Icon(Icons.clear)))
     ];
   }
 
